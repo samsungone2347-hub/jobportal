@@ -45,17 +45,21 @@ Preferred communication style: Simple, everyday language.
 
 ### Job Posting Workflow
 
-**Problem:** Need to moderate job postings to prevent spam and ensure quality.
+**Problem:** Need to balance moderation with immediate job visibility.
 
-**Solution:** Three-state approval system for job postings:
-- `pending` - Initial state when employer posts a job
-- `approved` - Admin-approved jobs visible to job seekers
+**Solution:** Auto-approval system with three-state tracking:
+- `approved` (default) - Jobs are immediately visible to job seekers upon posting
+- `pending` - Can be manually set by admins for review
 - `rejected` - Admin-rejected jobs
 
 **Key Features:**
+- Jobs are auto-approved by default for immediate visibility
 - Only approved jobs appear in public listings and search results
 - Employers can view all their postings regardless of status
-- Admin bulk actions for approving/rejecting multiple jobs
+- Admin bulk actions for managing job status (approve/reject)
+- Admin can still moderate jobs post-publication if needed
+
+**Design Change (October 2025):** Changed from pending-first to auto-approval to improve employer experience and reduce friction in job posting workflow.
 
 ### Application Management
 
@@ -115,10 +119,20 @@ Preferred communication style: Simple, everyday language.
 
 **Key Components:**
 - Base template with navigation (role-aware menu items)
+- Enhanced form layouts with clear error display
 - Message framework for user feedback
 - Responsive design using Bootstrap grid
-- Form rendering with Django template tags
+- Form rendering with helpful placeholders and hints
 - Dynamic status badges with color coding
+
+**UI/UX Improvements (October 2025):**
+- Registration and login forms enhanced with clear titles ("Create Your Account", "Welcome Back")
+- Prominent error display using Bootstrap alert classes
+- Field-level validation feedback with `is-invalid` and `invalid-feedback` classes
+- Helpful placeholder text and hints for all form fields
+- Job posting form redesigned with responsive 2-column layout
+- Better visual hierarchy with card shadows and spacing
+- novalidate attribute to prevent browser validation conflicts
 
 **Pros:** Simple deployment, no separate frontend build process, works without JavaScript
 **Cons:** Limited interactivity, full page reloads for updates
