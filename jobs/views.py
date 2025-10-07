@@ -50,7 +50,7 @@ def post_job(request):
             job = form.save(commit=False)
             job.employer = request.user
             job.save()
-            messages.success(request, 'Job posted successfully! It will be visible after admin approval.')
+            messages.success(request, 'Job posted successfully! Your job is now live and visible to job seekers.')
             return redirect('employer_dashboard')
     else:
         form = JobForm()
