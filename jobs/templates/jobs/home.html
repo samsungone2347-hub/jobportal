@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Home - Job Portal{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Find Your Dream Job</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                {{ form.search.label_tag }}
+                <input type="text" name="search" class="form-control" value="{{ request.GET.search }}" placeholder="Job title or keyword">
+            </div>
+            <div class="col-md-3">
+                {{ form.location.label_tag }}
+                <input type="text" name="location" class="form-control" value="{{ request.GET.location }}" placeholder="Location">
+            </div>
+            <div class="col-md-3">
+                {{ form.category.label_tag }}
+                <input type="text" name="category" class="form-control" value="{{ request.GET.category }}" placeholder="Category">
+            </div>
+            <div class="col-md-2">
+                {{ form.job_type.label_tag }}
+                <select name="job_type" class="form-select">
+                    {% for value, label in form.fields.job_type.choices %}
+                        <option value="{{ value }}" {% if request.GET.job_type == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if page_obj %}
+    {% for job in page_obj %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <p class="card-text"><strong>Company:</strong> {{ job.employer.company_name }}</p>
+                <p class="card-text"><strong>Location:</strong> {{ job.location }}</p>
+                <p class="card-text"><strong>Type:</strong> {{ job.get_job_type_display }}</p>
+                <p class="card-text"><strong>Category:</strong> {{ job.category }}</p>
+                {% if job.salary_min and job.salary_max %}
+                    <p class="card-text"><strong>Salary:</strong> ${{ job.salary_min }} - ${{ job.salary_max }}</p>
+                {% endif %}
+                <p class="card-text">{{ job.description|truncatewords:30 }}</p>
+                <a href="{% url 'job_detail' job.pk %}" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    {% endfor %}
+
+    <nav>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a></li>
+            {% endif %}
+
+            <li class="page-item active"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% else %}
+    <div class="alert alert-info">No jobs available at the moment.</div>
+{% endif %}
+{% endblock %}

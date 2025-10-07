@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+
+{% block title %}My Applications - Job Portal{% endblock %}
+
+{% block content %}
+<h2>My Applications</h2>
+
+{% if applications %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Applied On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.job.title }}</td>
+                        <td>{{ application.job.employer.company_name }}</td>
+                        <td>{{ application.job.location }}</td>
+                        <td>
+                            {% if application.status == 'accepted' %}
+                                <span class="badge bg-success">{{ application.get_status_display }}</span>
+                            {% elif application.status == 'rejected' %}
+                                <span class="badge bg-danger">{{ application.get_status_display }}</span>
+                            {% elif application.status == 'shortlisted' %}
+                                <span class="badge bg-info">{{ application.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-warning">{{ application.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ application.applied_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'job_detail' application.job.pk %}" class="btn btn-sm btn-info">View Job</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">You haven't applied to any jobs yet. <a href="{% url 'home' %}">Browse Jobs</a></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Applicants for {{ job.title }} - Job Portal{% endblock %}
+
+{% block content %}
+<h2>Applicants for {{ job.title }}</h2>
+<p><strong>Total Applications:</strong> {{ applications.count }}</p>
+
+{% if applications %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Applicant Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Resume</th>
+                    <th>Status</th>
+                    <th>Applied On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.applicant.username }}</td>
+                        <td>{{ application.applicant.email }}</td>
+                        <td>{{ application.applicant.phone }}</td>
+                        <td><a href="{{ application.resume.url }}" target="_blank" class="btn btn-sm btn-primary">View Resume</a></td>
+                        <td>
+                            <span class="badge bg-{{ application.status }}">{{ application.get_status_display }}</span>
+                        </td>
+                        <td>{{ application.applied_at|date:"M d, Y" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_application_status' application.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    {% for value, label in application.STATUS_CHOICES %}
+                                        <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">No applications received yet.</div>
+{% endif %}
+
+<a href="{% url 'employer_dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+{% endblock %}

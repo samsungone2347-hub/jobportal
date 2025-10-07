@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Employer Dashboard - Job Portal{% endblock %}
+
+{% block content %}
+<h2>Employer Dashboard</h2>
+<a href="{% url 'post_job' %}" class="btn btn-primary mb-3">Post New Job</a>
+
+<h3 class="mt-4">My Posted Jobs</h3>
+{% if jobs %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Applications</th>
+                    <th>Posted</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                    <tr>
+                        <td>{{ job.title }}</td>
+                        <td>{{ job.location }}</td>
+                        <td>{{ job.get_job_type_display }}</td>
+                        <td>
+                            {% if job.status == 'approved' %}
+                                <span class="badge bg-success">{{ job.get_status_display }}</span>
+                            {% elif job.status == 'pending' %}
+                                <span class="badge bg-warning">{{ job.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ job.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ job.applications.count }}</td>
+                        <td>{{ job.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'view_applicants' job.pk %}" class="btn btn-sm btn-info">View Applicants</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">You haven't posted any jobs yet.</div>
+{% endif %}
+{% endblock %}
